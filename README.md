@@ -1,1 +1,1 @@
-# frontend_kiosk
+# Kioskapp

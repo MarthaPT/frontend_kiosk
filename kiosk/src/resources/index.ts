@@ -1,0 +1,1 @@
+// responsabil pentru comunicarea cu BE 
