@@ -20,12 +20,14 @@ const Orders = () => {
     return null;
   }
 
-    const filteredOrders = orders.filter(order =>
-      order.products.some(p =>
-        p.product?.name?.toLowerCase().includes(search.toLowerCase())
-      ) ||
-      order.id?.toString().toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredOrders = orders
+      .filter(order => order.products && order.products.length > 0) // only orders with at least 1 item
+      .filter(order =>
+        order.products.some(p =>
+          p.product?.name?.toLowerCase().includes(search.toLowerCase())
+        ) ||
+        order.id?.toString().toLowerCase().includes(search.toLowerCase())
+      );
   return <div style={{ maxHeight: "80vh", overflowY: "auto" }}>
     <input
             type="text"

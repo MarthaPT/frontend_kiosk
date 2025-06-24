@@ -78,12 +78,14 @@ const History = () => {
       const dateB = new Date(yearB, monthB - 1, dayB);
       return dateA - dateB;
     });
-    const filteredOrders = processedOrders.filter(order =>
-      order.products.some(p =>
-        p.product?.name?.toLowerCase().includes(search.toLowerCase())
-      ) ||
-      order.id?.toString().toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredOrders = processedOrders
+      .filter(order => Array.isArray(order.products) && order.products.length > 0) // only orders with at least 1 item
+      .filter(order =>
+        order.products.some(p =>
+          p.product?.name?.toLowerCase().includes(search.toLowerCase())
+        ) ||
+        order.id?.toString().toLowerCase().includes(search.toLowerCase())
+      );
   return (
     <Grid container sx={{ minHeight: "100vh" }}>
       <Grid item xs={2}>

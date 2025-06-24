@@ -15,6 +15,7 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   increaseQuantity: (product: Product) => void;
   decreaseQuantity: (product: Product) => void;
+  setZeroQuantity: (product: Product) => void;
   clearCart: () => void;
 }
 
@@ -64,6 +65,14 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         return [...prevItems, { ...product, quantity: 1 }];
       }
     });
+  };
+
+const setZeroQuantity = (product: Product) => {
+    setCartItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === product.id ? { ...item, quantity: 0 } : item
+      )
+    );
   };
 
   const increaseQuantity = (product: Product) => {

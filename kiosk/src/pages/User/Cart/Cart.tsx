@@ -17,7 +17,7 @@ import { useState } from "react";
 import CartSummaryModal from "@/components/modal/Modal";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/redux/store/store";
-import { clearCart, decreaseQuantity, increaseQuantity } from "@/redux/cart/cartSlices";
+import { clearCart, setZeroQuantity, decreaseQuantity, increaseQuantity } from "@/redux/cart/cartSlices";
 
 import jsPDF from "jspdf";
 
@@ -220,13 +220,24 @@ const Cart = () => {
                     {item.quantity}
                   </Typography>
 
-                  {/* Increase Quantity Button */}
-                  <IconButton
+                    {/* Increase Quantity Button */}
+                    <IconButton
                     size="small"
                     onClick={() => dispatch(increaseQuantity(item.id))}
-                  >
+                    >
                     <AddCircleOutlineOutlinedIcon />
-                  </IconButton>
+                    </IconButton>
+                      {/* Spacer to push remove button to the right */}
+                      <Box sx={{ flex: 1 }} />
+                      {/* Remove Item (Set Quantity to Zero) */}
+                      <IconButton
+                      size="small"
+                      color="error"
+                      onClick={() => dispatch(setZeroQuantity(item.id))}
+                      aria-label="Remove item"
+                      >
+                      <span style={{ fontSize: 22, fontWeight: "bold", lineHeight: 1 }}>×</span>
+                      </IconButton>
                 </Box>
               </CardContent>
             </Box>
@@ -236,27 +247,47 @@ const Cart = () => {
       {cartItems.length !== 0 && (
         <Typography>Total: {totalPrice.toFixed(2)} Lei</Typography>
       )}
-      <Button
-        variant="contained"
-        sx={{
-          backgroundColor: "green",
-          color: "white",
-          borderRadius: "20px",
-          width: "100%",
-          marginTop: 2,
-          "&:hover": {
-            backgroundColor: "darkgreen",
-          },
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-        onClick={() => setModalOpen(true)} // Open the cart summary modal
-        disabled={cartItems.length === 0} // Disable if cart is empty
-      >
-        Platește coșul
-        <AddShoppingCartIcon sx={{ marginLeft: 1 }} />
-      </Button>
+      <Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+        <Button
+          variant="contained"
+          sx={{
+        backgroundColor: "green",
+        color: "white",
+        borderRadius: "20px",
+        flex: 1,
+        "&:hover": {
+          backgroundColor: "darkgreen",
+        },
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+          }}
+          onClick={() => setModalOpen(true)} // Open the cart summary modal
+          disabled={cartItems.length === 0} // Disable if cart is empty
+        >
+          Platește coșul
+          <AddShoppingCartIcon sx={{ marginLeft: 1 }} />
+        </Button>
+        <Button
+          variant="outlined"
+          color="error"
+          sx={{
+        borderRadius: "20px",
+        flex: 1,
+        fontWeight: "bold",
+        borderWidth: 2,
+        borderColor: "#d32f2f",
+        "&:hover": {
+          backgroundColor: "#ffeaea",
+          borderColor: "#b71c1c",
+        },
+          }}
+          onClick={() => dispatch(clearCart())}
+          disabled={cartItems.length === 0}
+        >
+          Golește coșul
+        </Button>
+      </Box>
 
       {/* Cart Summary Modal */}
       <CartSummaryModal
@@ -301,6 +332,7 @@ const Cart = () => {
           >
             OK
           </Button>
+          
         </Box>
       </Modal>
     </Box>
