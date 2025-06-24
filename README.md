@@ -16,7 +16,20 @@ npm install
 ```
 2 **Run APP**
 ```bash
+cd .\kisok\
 npm run dev
 ```
 
+*Local webpage GUI*
+```
+http://localhost:3000
+```
 
+**Project structure**
+```
+.
+├── kiosk/             # Source code
+├── dist/              # Build output
+├── package.json
+├── package-lock.json
+```
