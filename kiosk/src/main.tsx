@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { SnackbarProvider } from "notistack";
 import App from "./App.tsx";
 import React from "react";
+import './global.css';
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

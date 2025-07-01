@@ -22,73 +22,157 @@ import { clearCart, setZeroQuantity, decreaseQuantity, increaseQuantity } from "
 import jsPDF from "jspdf";
 
 function genereazaChitanta(cartItems, totalPrice, serie) {
-  const doc = new jsPDF();
-
-  // Antet
-  doc.setFontSize(18);
-  doc.text("FARMA", 10, 15);
-  doc.setFontSize(14);
-  doc.text("CHITANTA FISCALA", 10, 25);
-
-  // Dată și serie
-  const data = new Date();
-  const dataStr = data.toLocaleString("ro-RO");
-  doc.setFontSize(12);
-  doc.text(`Serie: ${serie}`, 150, 15);
-  doc.text(`Data: ${dataStr}`, 150, 22);
-
-  // Linie de tabel
-  let y = 35;
-  doc.setFontSize(12);
-  doc.text("Nr.", 10, y);
-  doc.text("Produs", 25, y);
-  doc.text("Cant.", 100, y);
-  doc.text("Pret", 120, y);
-  doc.text("Total", 150, y);
-  y += 7;
-  doc.line(10, y, 200, y);
-  y += 5;
-
-  // Produse
-  cartItems.forEach((item, idx) => {
-    doc.text(`${idx + 1}`, 12, y);
-
-    // Spargem numele produsului în linii de max 25 caractere
-    const maxNameLength = 30;
-    const nameLines: string[] = [];
-    for (let i = 0; i < item.name.length; i += maxNameLength) {
-      nameLines.push(item.name.slice(i, i + maxNameLength));
-    }
-
-    // Scriem fiecare linie a numelui
-    nameLines.forEach((line, lineIdx) => {
-      doc.text(line, 30, y + lineIdx * 5);
-    });
-
-    // Scriem restul informațiilor pe prima linie
-    doc.text(`${item.quantity}`, 102, y);
-    doc.text(`${item.price.toFixed(2)} RON`, 120, y);
-    doc.text(`${(item.price * item.quantity).toFixed(2)} RON`, 150, y);
-
-    // Creștem y cu 5 pentru fiecare linie suplimentară, plus spațiu între produse
-    y += 5 * nameLines.length + 2;
+  const doc = new jsPDF({
+    orientation: "p",
+    unit: "mm",
+    format: [58, 200 + cartItems.length * 8], // chitanță îngustă, lungime dinamică
   });
 
-  // Total general
+  // Antet farmacie
+  let y = 8;
+  doc.setFontSize(10);
+  doc.text("S.C. HELP FARM MDS", 4, y);
   y += 5;
-  doc.setFontSize(13);
-  doc.text(`TOTAL: ${totalPrice.toFixed(2)} RON`, 120, y);
+  doc.setFontSize(8);
+  doc.text("B-DUL UNIRII BL.B9G1 PARTER", 4, y);
+  y += 4;
+  doc.text("BUZAU, JUD. BUZAU", 4, y);
+  y += 4;
+  doc.text("C.F. RO 17759408", 4, y);
+  y += 4;
+  doc.text('FARMACIA CATENA', 4, y);
+  y += 4;
+  doc.text("VA MULTUMIM!", 4, y);
 
-  // Semnătură
-  y += 20;
-  doc.setFontSize(12);
-  doc.text("Semnatura vanzator:", 10, y);
-  doc.text("__________________", 60, y);
+  // Linie separatoare
+  y += 4;
+  doc.setLineWidth(0.2);
+  doc.line(2, y, 56, y);
+  y += 3;
 
-  // Mulțumire
-  y += 15;
+    // Tabel produse
+  doc.setFontSize(8);
+  doc.text("Cant    Produs                Pret        Total", 2, y);
+  y += 4;
+
+  let totalReducere = 0;
+  cartItems.forEach((item, idx) => {
+    // Cantitate și denumire
+    const prodLine = `${item.quantity} x ${item.name}`;
+    // Scrie produsul pe mai multe linii dacă e prea lung
+    const maxProdWidth = 28; // lățime maximă pentru denumire (mm)
+    const prodLines = doc.splitTextToSize(prodLine, maxProdWidth);
+
+    // Prima linie: cantitate + produs, preț și total pe aceeași linie
+    doc.text(prodLines[0], 2, y);
+    doc.text(item.price.toFixed(2), 38, y, { align: "right" });
+    doc.text((item.price * item.quantity).toFixed(2), 54, y, { align: "right" });
+
+    y += 4;
+
+    // Liniile suplimentare (dacă există), doar denumirea produsului
+    for (let i = 1; i < prodLines.length; i++) {
+      doc.text(prodLines[i], 8, y); // indentare la dreapta pentru restul liniei
+      y += 4;
+    }
+
+    // Reducere dacă există
+    if (item.discount && item.discount > 0) {
+      doc.setTextColor(120, 120, 120);
+      doc.text("REDUCERE", 4, y);
+      doc.setTextColor(0, 0, 0);
+      doc.text(`-${item.discount.toFixed(2)}`, 38, y, { align: "right" });
+      totalReducere += item.discount;
+      y += 4;
+    }
+  });
+
+  // Linie separatoare
+  doc.line(2, y, 56, y);
+  y += 3;
+
+  // Operator și economie
+  doc.setFontSize(8);
+  doc.text(`Operator: Chiosc Digital`, 2, y);
+  y += 4;
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOMIE DE:", 2, y);
+  doc.setFont("helvetica", "normal");
+  doc.text(totalReducere.toFixed(2) + " lei", 38, y, { align: "right" });
+  y += 4;
+
+  // Totaluri
+  doc.setFontSize(8);
+  doc.text(`Total întreg: ${(totalPrice + totalReducere).toFixed(2)}`, 2, y);
+  y += 4;
+  doc.text(`Total reducere: ${totalReducere.toFixed(2)}`, 2, y);
+  y += 4;
+  doc.text(`TOTAL: ${totalPrice.toFixed(2)} lei`, 2, y);
+  y += 4;
+
+// Linie separatoare
+  doc.line(2, y, 56, y);
+  y += 3;
+
+// TVA pe cote
+  // Dacă ai produse cu TVA diferit, setează-le pe item.tva sau similar!
+  let tva9 = 0;
+  let tva24 = 0;
+  cartItems.forEach((item) => {
+    // Exemplu: item.tva = 0.09 sau 0.24 (sau default 0.09)
+    const tva = item.tva ?? 0.09;
+    const valoare = item.price * item.quantity;
+    const tvaVal = valoare * tva / (1 + tva);
+    if (tva === 0.09) tva9 += tvaVal;
+    else if (tva === 0.24) tva24 += tvaVal;
+  });
+
+  // Afișare TVA pe cote
+  doc.text(`C  9%:`, 2, y);
+  doc.text(tva9.toFixed(2), 54, y, { align: "right" });
+  y += 4;
+  doc.text(`D 24%:`, 2, y);
+  doc.text(tva24.toFixed(2), 54, y, { align: "right" });
+  y += 4;
+  doc.setFont("helvetica", "bold");
+  doc.text(`TVA TOT.`, 2, y);
+  doc.text((tva9 + tva24).toFixed(2), 54, y, { align: "right" });
+  doc.setFont("helvetica", "normal");
+  y += 4;
+  // Linie separatoare
+  doc.line(2, y, 56, y);
+  y += 5;
+
+  // === SECTIUNE NOUA: Order ID evidențiat ===
   doc.setFontSize(11);
-  doc.text("Va multumim pentru cumparaturi!", 10, y);
+  doc.setFont("helvetica", "bold");
+  doc.text(`COMANDA NR: ${serie}`, 2, y);
+  y += 7;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+
+  // Linie separatoare sub Order ID
+  doc.line(2, y, 56, y);
+  y += 3;
+
+  // Data și oră
+  const data = new Date();
+  const dataStr = data
+    .toLocaleString("ro-RO", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    })
+    .replace(",", "");
+  doc.text(dataStr, 2, y);
+
+  // Footer
+  y += 6;
+  doc.setFontSize(7);
+  doc.text("Va multumim pentru cumparaturi!", 2, y);
 
   // Salvează PDF
   doc.save(`chitanta_${serie}.pdf`);

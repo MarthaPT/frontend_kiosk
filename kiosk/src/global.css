@@ -22,3 +22,8 @@ body {
 *::-webkit-scrollbar-thumb {
   background-color: rgba(169, 169, 169, 0.75);
 }
+
+.carousel-item-padding {
+  padding-left: 16px;
+  padding-right: 16px;
+}

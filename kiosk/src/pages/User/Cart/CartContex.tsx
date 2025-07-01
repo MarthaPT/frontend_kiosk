@@ -107,6 +107,7 @@ const setZeroQuantity = (product: Product) => {
       value={{
         cartItems,
         addToCart,
+        setZeroQuantity,
         increaseQuantity,
         decreaseQuantity,
         clearCart,

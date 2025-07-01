@@ -15,7 +15,7 @@ const Setup = () => {
   return (
     <Grid container sx={classes.grid} gap={20}>
         <Button
-          onClick={() => handleNavigation("admin")}
+          onClick={() => handleNavigation("loginadmin")}
           variant="contained"
           color="primary"
           startIcon={<UserCog size={52} height={62} width={92} />}
@@ -25,7 +25,7 @@ const Setup = () => {
         </Button>
 
         <Button
-          onClick={() => handleNavigation("user")}
+          onClick={() => handleNavigation("startuser")}
           variant="contained"
           color="primary"
           startIcon={<User size={52} height={62} width={92} />}

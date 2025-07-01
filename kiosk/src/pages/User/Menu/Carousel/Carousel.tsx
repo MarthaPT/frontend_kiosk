@@ -56,32 +56,29 @@ const CarouselProducts = () => {
       container
       sx={{
         width: "100%",
-        overflow: "hidden",
+        //overflow: "hidden",
       }}
     >
-      <Grid item xs={12}>
-        <Carousel
-          responsive={responsive} // Ensure the responsive config is defined
-          autoPlay={true}
-          swipeable={true}
-          draggable={true}
-          infinite={true}
-          showDots={true}
-          arrows={true}
-          partialVisible={true}
-        >
-          {products.map((product, index) => (
-            <Grid
-              item
-              key={index}
-              sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexGrow: 1,
-              }}
-            >
+      <Grid
+    container
+    spacing={4}
+    sx={{
+      width: "100%",
+      justifyContent: "center",
+    }}
+  >
+    {products.map((product, index) => (
+      <Grid
+        item
+        key={index}
+        xs={12}
+        sm={6}
+        md={4} // 3 pe rând la ecran mare
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
               <ProductCard
                 product={product}
                 onClick={() => handleClick(product.name)}
@@ -90,7 +87,6 @@ const CarouselProducts = () => {
               />
             </Grid>
           ))}
-        </Carousel>
       </Grid>
     </Grid>
   );

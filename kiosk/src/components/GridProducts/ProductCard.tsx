@@ -20,18 +20,23 @@ export const ProductCard = ({ product, onClick, addToCart }: Props) => {
   return (
     <Card
       sx={{
-        width: 300, // Fixed width for all cards
-        height: 500, // Ensure consistent card height for all cards
+        width: 220, // Fixed width for all cards
+        height: 400, // Ensure consistent card height for all cards
         display: "flex",
         flexDirection: "column", // Stack content vertically
         justifyContent: "space-between", // Distribute content evenly
         alignItems: "center",
         textAlign: "center",
         cursor: "pointer",
+        backgroundColor: "#fff", // fundal alb pentru contrast
+        border: "1.5px solid #bdbdbd", // chenar vizibil gri
+        borderRadius: 2, // colțuri rotunjite
+        boxShadow: "0 2px 8px rgba(0,0,0,0.07)", // umbră discretă
         "&:hover": {
-          "& .product-title": {
-            color: "red",
-            textDecoration: "underline",
+          border: "2px solid #4caf50", // chenar verde la hover
+            "& .product-title": {
+              color: "red",
+              textDecoration: "underline",
           },
         },
       }}
@@ -39,12 +44,12 @@ export const ProductCard = ({ product, onClick, addToCart }: Props) => {
     >
       <CardMedia
         component="img"
-        height="250"
+        height="140"
         image={product.image_url}
         alt={product.title}
-        sx={{ objectFit: "" }}
+        sx={{ objectFit: "contain" }}
       />
-      <CardContent sx={{ flexGrow: 1 }}>
+      <CardContent sx={{ flexGrow: 1, p: 0.5 }}>
         <Typography
           variant="h6"
           gutterBottom
@@ -54,6 +59,7 @@ export const ProductCard = ({ product, onClick, addToCart }: Props) => {
             overflow: "hidden",
             WebkitBoxOrient: "vertical",
             WebkitLineClamp: 2, // Limit the title to 2 lines
+            minHeight: 65,
           }}
           className="product-title"
         >
@@ -65,7 +71,7 @@ export const ProductCard = ({ product, onClick, addToCart }: Props) => {
           {product.price} Lei
         </Typography>
       </CardContent>
-      <CardActions>
+      <CardActions sx={{ p: 0.5, width: "100%" }}>
         <Button
           variant="contained"
           sx={{ backgroundColor: "#4caf50", color: "white", width: "100%" }}
